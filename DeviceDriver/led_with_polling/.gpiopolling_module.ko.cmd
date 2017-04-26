@@ -1,0 +1,1 @@
+cmd_/home/pi/selfauto/DeviceDriver/led_with_polling/gpiopolling_module.ko := ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/pi/selfauto/DeviceDriver/led_with_polling/gpiopolling_module.ko /home/pi/selfauto/DeviceDriver/led_with_polling/gpiopolling_module.o /home/pi/selfauto/DeviceDriver/led_with_polling/gpiopolling_module.mod.o ;  true
