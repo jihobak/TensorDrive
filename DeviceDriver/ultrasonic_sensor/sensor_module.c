@@ -4,7 +4,6 @@
 #include <linux/io.h>
 #include <linux/gpio.h>
 #include<asm/uaccess.h>
-//#include <mach/platform.h>
 #include <linux/delay.h>
 #include <linux/time.h>
 #include <linux/interrupt.h>
@@ -14,8 +13,8 @@ MODULE_LICENSE("GPL");
 #define GPIO_MAJOR 243
 #define GPIO_MINOR 0
 #define GPIO_DEVICE "sensor"
-#define GPIO_TRIG 18
-#define GPIO_ECHO 24
+#define GPIO_TRIG 23
+#define GPIO_ECHO 25
 
 unsigned int distance;
 volatile unsigned *gpio;
@@ -35,7 +34,7 @@ struct cdev gpio_cdev;
 struct timeval after, before;
 
 
-int start_module(void) {
+__init int start_module(void) {
 	dev_t devno;
 	unsigned int count;
 	int err;
@@ -61,7 +60,7 @@ int start_module(void) {
 	return 0;
 }
 
-void end_module(void) {
+__init void end_module(void) {
 	dev_t devno = MKDEV(GPIO_MAJOR, GPIO_MINOR);
 	unregister_chrdev_region(devno , 1);
 

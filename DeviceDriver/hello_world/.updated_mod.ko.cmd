@@ -1,0 +1,1 @@
+cmd_/home/pi/selfauto/DeviceDriver/hello_world/updated_mod.ko := ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/pi/selfauto/DeviceDriver/hello_world/updated_mod.ko /home/pi/selfauto/DeviceDriver/hello_world/updated_mod.o /home/pi/selfauto/DeviceDriver/hello_world/updated_mod.mod.o ;  true

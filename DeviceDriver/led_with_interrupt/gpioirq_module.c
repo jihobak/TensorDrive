@@ -47,7 +47,7 @@ static irqreturn_t isr_func(int irq, void* data)
 	return IRQ_HANDLED;
 }
 
-int start_module(void)
+__init int start_module(void)
 {
 	dev_t devno;
 	unsigned int count;
@@ -75,7 +75,7 @@ int start_module(void)
 	
 	gpio_request(GPIO_SW, "SWITCH");
 	gpio_direction_input(GPIO_SW);
-	gpio_set_debounce(GPIO_SW, 200);
+	gpio_set_debounce(GPIO_SW, 20); // Debouncing
 
 	switch_irq = gpio_to_irq(GPIO_SW);
 	request_irq(switch_irq, isr_func, IRQF_TRIGGER_FALLING | IRQF_DISABLED, "SWITCH", NULL);
@@ -83,7 +83,7 @@ int start_module(void)
 	return 0;
 }
 
-void end_module(void)
+__init void end_module(void)
 {
 	dev_t devno = MKDEV(GPIO_MAJOR, GPIO_MINOR);
 	unregister_chrdev_region(devno, 1);
