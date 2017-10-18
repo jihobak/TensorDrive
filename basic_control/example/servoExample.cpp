@@ -26,7 +26,7 @@ SOFTWARE.
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h> // for changing terminal property
-#include <unistd.h> // for using const vluae, 'STDIN_FILENO'.
+#include <unistd.h> // for using const value, 'STDIN_FILENO'.
 #include <time.h>
 #include <JHPWMPCA9685.h>
 
@@ -41,34 +41,13 @@ int servo_engine = 389;
 int gear_change = 0;
 int key = 0;
 
-int getkey() {
-    int character;
-    struct termios orig_term_attr;
-    struct termios new_term_attr;
-
-    /* set the terminal to raw mode */
-    tcgetattr(fileno(stdin), &orig_term_attr);
-    memcpy(&new_term_attr, &orig_term_attr, sizeof(struct termios));
-    new_term_attr.c_lflag &= ~(ECHO|ICANON);
-    new_term_attr.c_cc[VTIME] = 0;
-    new_term_attr.c_cc[VMIN] = 0;
-    tcsetattr(fileno(stdin), TCSANOW, &new_term_attr);
-
-    /* read a character from the stdin stream without blocking */
-    /*   returns EOF (-1) if no character is available */
-    character = fgetc(stdin);
-
-    /* restore the original terminal attributes */
-    tcsetattr(fileno(stdin), TCSANOW, &orig_term_attr);
-
-    return character;
-}
 
 struct termios NonBlockingTerminalMode()
 {
     struct termios org_term;
     struct termios new_term;
 
+    // Get a original terminal status
     tcgetattr(STDIN_FILENO, &org_term);
     new_term = org_term;
     
@@ -76,9 +55,10 @@ struct termios NonBlockingTerminalMode()
     new_term.c_cc[VMIN] = 0;  // length of input
     new_term.c_cc[VTIME] = 0; // timeout   
    
-    //setting
+    //setting terminal status we set
     tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
     
+    // return for roll back to original status
     return org_term;
 }
 
@@ -87,9 +67,10 @@ char GetNonBlockingInput()
 {
     char input_key = 0;
   
+    // Check if user enter the keyboard.
     if(read(STDIN_FILENO, &input_key, 1) !=1) input_key = 0;
     else {
-         if (input_key == 27) {
+        if (input_key == 27) {
 		char dummy;
 		while(read(STDIN_FILENO, &dummy, 1) == 1);
     	}
@@ -115,7 +96,7 @@ int map ( int x, int in_min, int in_max, int out_min, int out_max) {
     int toReturn =  (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min ;
     // For debugging:
     // printf("MAPPED %d to: %d\n", x, toReturn);
-    return toReturn ;
+    return toReturn;
 }
 
 int main() {
@@ -137,7 +118,7 @@ int main() {
 
             //pca9685->setPWM(0,0,servoMin) ;
             //pca9685->setPWM(1,0,servoMin) ;
-	    key = GetNonBlockingInput();
+	        key = GetNonBlockingInput();
             if(key == 27) break;
             switch(key)
             {
@@ -177,8 +158,8 @@ int main() {
                         gear_change = 0;
                         break;
            }
-	   pca9685->setPWM(0, 0, servo);
-           pca9685->setPWM(1, 0, servo_engine);
+	    pca9685->setPWM(0, 0, servo);
+        pca9685->setPWM(1, 0, servo_engine);
 
             //pca9685->setPWM(0,0,servoMax) ;
             //pca9685->setPWM(1,0,map(90,0,180,servoMin, servoMax)) ;
@@ -191,5 +172,5 @@ int main() {
     pca9685->closePCA9685();
 
     ResetNonBlockingTerminalMode(org_term);
-    printf("Finish ~~~~~\n");
+    //printf("Finish ~~~~~\n");
 }
