@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="ta_lab3" type="safety.py" name="Safety_Controller"  output="screen"/>
+</launch>
